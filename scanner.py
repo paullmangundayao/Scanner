@@ -36,7 +36,8 @@ class ScannerGUI:
         self.engine.setProperty('rate', 175)
         
         # Create "Scanned Files" directory in Documents
-        self.destination_folder = os.path.join(os.path.expanduser('~'), 'Downloads')
+        self.destination_folder = os.path.join(os.path.expanduser('~'), 'Documents', 
+                                               'Scanned Files')
         os.makedirs(self.destination_folder, exist_ok=True)
 
         # Initialize camera index
@@ -220,7 +221,7 @@ class ScannerGUI:
         if self.cap.isOpened():
             ret, frame = self.cap.read()
             if ret:
-                # cv2.normalize(frame, frame, 0, 255, cv2.NORM_MINMAX)
+                cv2.normalize(frame, frame, 0, 255, cv2.NORM_MINMAX)
                 # Frame processing
                 width = 1920
                 height = 1080
@@ -269,7 +270,7 @@ class ScannerGUI:
                 camera_image = Image.fromarray(camera_frame)
                 camera_photo = ImageTk.PhotoImage(image=camera_image)
                 
-                # Display camera frame in camera label
+                # Display camera frame in preview label
                 self.camera_label.configure(image=camera_photo)
                 self.camera_label.image = camera_photo
 
@@ -281,7 +282,7 @@ class ScannerGUI:
                             cv2.rectangle(preview_to_show, start, end, 255, -1)
                     else:
                         preview_to_show = self.preview
-                        
+                    
                     preview_to_show = cv2.resize(preview_to_show, (600, 800))
                     preview_image = Image.fromarray(preview_to_show)
                     preview_photo = ImageTk.PhotoImage(image=preview_image)
@@ -334,7 +335,6 @@ class ScannerGUI:
         else:
             self.status_var.set("No document scanned yet or no pages added")
             self.speak("No document scanned yet or no pages added")
-
     def handle_edit(self):
         if self.scanned is not None:
             self.selecting = not self.selecting
@@ -345,9 +345,9 @@ class ScannerGUI:
                 self.preview = self.scanned.copy()
                 
                 # Bind mouse events for editing
-                self.document_label.bind('<Button-1>', self.start_rect)
-                self.document_label.bind('<B1-Motion>', self.draw_rect)
-                self.document_label.bind('<ButtonRelease-1>', self.end_rect)
+                self.video_label.bind('<Button-1>', self.start_rect)
+                self.video_label.bind('<B1-Motion>', self.draw_rect)
+                self.video_label.bind('<ButtonRelease-1>', self.end_rect)
             else:
                 self.status_var.set("Modify mode deactivated")
                 self.speak("Modify mode deactivated.")
@@ -355,9 +355,9 @@ class ScannerGUI:
                 self.preview = self.scanned.copy()
                 
                 # Unbind mouse events
-                self.document_label.unbind('<Button-1>')
-                self.document_label.unbind('<B1-Motion>')
-                self.document_label.unbind('<ButtonRelease-1>')
+                self.video_label.unbind('<Button-1>')
+                self.video_label.unbind('<B1-Motion>')
+                self.video_label.unbind('<ButtonRelease-1>')
 
     def start_rect(self, event):
         if self.selecting:
@@ -385,8 +385,8 @@ class ScannerGUI:
             temp_preview_photo = ImageTk.PhotoImage(image=temp_preview_image)
             
             # Update label
-            self.document_label.configure(image=temp_preview_photo)
-            self.document_label.image = temp_preview_photo
+            self.video_label.configure(image=temp_preview_photo)
+            self.video_label.image = temp_preview_photo
 
     def end_rect(self, event):
         if self.selecting and self.drawing:
@@ -409,8 +409,8 @@ class ScannerGUI:
             temp_preview_photo = ImageTk.PhotoImage(temp_preview_image)
             
             # Update label
-            self.document_label.configure(image=temp_preview_photo)
-            self.document_label.image = temp_preview_photo
+            self.video_label.configure(image=temp_preview_photo)
+            self.video_label.image = temp_preview_photo
 
     def handle_open_folder(self):
         os.startfile(self.destination_folder)
