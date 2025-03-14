@@ -1,15 +1,15 @@
+from datetime import datetime
+import os
+import threading
+import queue
 import tkinter as tk
 from tkinter import filedialog
 import cv2
 from PIL import Image, ImageTk
 import numpy as np
-from datetime import datetime
-import os
 import pyttsx3
-import threading
 from fpdf import FPDF
 from imutils.perspective import four_point_transform
-import queue
 
 class ScannerGUI:
     def __init__(self, root):
@@ -61,7 +61,7 @@ class ScannerGUI:
         self.update_video()
         
         # Initial speak
-        self.speak("Initializing A.F.P.M.B.A.I. Scanner Application")
+        self.speak("Initializing Scanner Application")
 
     def process_speech_queue(self):
         while True:
@@ -221,7 +221,7 @@ class ScannerGUI:
         if self.cap.isOpened():
             ret, frame = self.cap.read()
             if ret:
-                cv2.normalize(frame, frame, 0, 255, cv2.NORM_MINMAX)
+                # cv2.normalize(frame, frame, 0, 255, cv2.NORM_MINMAX)
                 # Frame processing
                 width = 1920
                 height = 1080
@@ -345,9 +345,9 @@ class ScannerGUI:
                 self.preview = self.scanned.copy()
                 
                 # Bind mouse events for editing
-                self.video_label.bind('<Button-1>', self.start_rect)
-                self.video_label.bind('<B1-Motion>', self.draw_rect)
-                self.video_label.bind('<ButtonRelease-1>', self.end_rect)
+                self.document_label.bind('<Button-1>', self.start_rect)
+                self.document_label.bind('<B1-Motion>', self.draw_rect)
+                self.document_label.bind('<ButtonRelease-1>', self.end_rect)
             else:
                 self.status_var.set("Modify mode deactivated")
                 self.speak("Modify mode deactivated.")
@@ -355,9 +355,9 @@ class ScannerGUI:
                 self.preview = self.scanned.copy()
                 
                 # Unbind mouse events
-                self.video_label.unbind('<Button-1>')
-                self.video_label.unbind('<B1-Motion>')
-                self.video_label.unbind('<ButtonRelease-1>')
+                self.document_label.unbind('<Button-1>')
+                self.document_label.unbind('<B1-Motion>')
+                self.document_label.unbind('<ButtonRelease-1>')
 
     def start_rect(self, event):
         if self.selecting:
@@ -385,8 +385,8 @@ class ScannerGUI:
             temp_preview_photo = ImageTk.PhotoImage(image=temp_preview_image)
             
             # Update label
-            self.video_label.configure(image=temp_preview_photo)
-            self.video_label.image = temp_preview_photo
+            self.document_label.configure(image=temp_preview_photo)
+            self.document_label.image = temp_preview_photo
 
     def end_rect(self, event):
         if self.selecting and self.drawing:
@@ -409,8 +409,8 @@ class ScannerGUI:
             temp_preview_photo = ImageTk.PhotoImage(temp_preview_image)
             
             # Update label
-            self.video_label.configure(image=temp_preview_photo)
-            self.video_label.image = temp_preview_photo
+            self.document_label.configure(image=temp_preview_photo)
+            self.document_label.image = temp_preview_photo
 
     def handle_open_folder(self):
         os.startfile(self.destination_folder)
